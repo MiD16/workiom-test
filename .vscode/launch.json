@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "name": "Flutter (lib/presentation/pages/thank_you_screen.dart)",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/presentation/pages/thank_you_screen.dart"
+        }
+    ]
+}

@@ -10,6 +10,8 @@ class ImageConstant {
   static String imgPolygon6 = '${_basePath}img_polygon_6.svg';
   static String imgSearch = '${_basePath}img_search.svg';
   static String imgWorkiom = '${_basePath}img_workiom.svg';
+  static String imgGeneralPublick = '${_basePath}img_general_publick.svg';
+  static String imgFieldText = '${_basePath}img_field_text.svg';
 
   static String imgConfiguration = '${_basePath}img_configuration.svg';
   static String imgConfigurationShow = '${_basePath}img_configuration_show.svg';

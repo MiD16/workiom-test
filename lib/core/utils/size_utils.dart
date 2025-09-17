@@ -4,8 +4,12 @@ const int figmaDesignWidth = 375;
 
 enum DeviceType { mobile, tablet, desktop }
 
-typedef ResponsiveBuild = Widget Function(
-    BuildContext context, Orientation orientation, DeviceType deviceType);
+typedef ResponsiveBuild =
+    Widget Function(
+      BuildContext context,
+      Orientation orientation,
+      DeviceType deviceType,
+    );
 
 class Sizer extends StatelessWidget {
   const Sizer({super.key, required this.builder});
@@ -14,12 +18,16 @@ class Sizer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      return OrientationBuilder(builder: (context, orientation) {
-        SizeUtils.setScreenSize(constraints, orientation);
-        return builder(context, orientation, SizeUtils.deviceType);
-      });
-    });
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return OrientationBuilder(
+          builder: (context, orientation) {
+            SizeUtils.setScreenSize(constraints, orientation);
+            return builder(context, orientation, SizeUtils.deviceType);
+          },
+        );
+      },
+    );
   }
 }
 
@@ -40,12 +48,12 @@ class SizeUtils {
     boxConstraints = constraints;
     orientation = currentOrientation;
     if (orientation == Orientation.portrait) {
-      width =
-          boxConstraints.maxWidth.isNonZero(defaultValue: figmaDesignWidth);
+      width = boxConstraints.maxWidth.isNonZero(defaultValue: figmaDesignWidth);
       height = boxConstraints.maxHeight.isNonZero();
     } else {
-      width =
-          boxConstraints.maxHeight.isNonZero(defaultValue: figmaDesignWidth);
+      width = boxConstraints.maxHeight.isNonZero(
+        defaultValue: figmaDesignWidth,
+      );
       height = boxConstraints.maxWidth.isNonZero();
     }
     deviceType = DeviceType.mobile;
@@ -57,7 +65,7 @@ extension ResponsiveExtension on num {
 
   double get h => ((this * _width) / figmaDesignWidth);
 
-  double get fSize => ((this * _width) / figmaDesignWidth);
+  double get fontSize => ((this * _width) / figmaDesignWidth);
 }
 
 extension FormatExtension on double {
