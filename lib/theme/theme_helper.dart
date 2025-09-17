@@ -66,6 +66,7 @@ class LightCodeColors {
   Color get greyCustom => Colors.grey;
   Color get colorB25555 => Color(0xB2555555);
   Color get colorFFE5E5 => Color(0xFFE5E5E5);
+  Color get colorFFE0E0 => Color(0xFFE0E0E0);
 
   Color get grey200 => Colors.grey.shade200;
   Color get grey100 => Colors.grey.shade100;

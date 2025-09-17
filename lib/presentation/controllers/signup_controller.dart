@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:workiom/data/models/responses/editions_response.dart';
 import 'package:workiom/data/models/responses/password_complexity_response.dart';
 import '../../domain/repositories/auth_repository.dart';
@@ -99,5 +100,64 @@ class SignupController extends ChangeNotifier {
       loading = false;
       notifyListeners();
     }
+  }
+
+  TextEditingController teamNameController = TextEditingController();
+  TextEditingController firstNameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
+
+  bool isLoading = false;
+
+  @override
+  void dispose() {
+    teamNameController.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
+    super.dispose();
+  }
+
+  void initialize() {
+    isLoading = false;
+    notifyListeners();
+  }
+
+  String? validateCompanyName(String? value) {
+    if (value?.isEmpty == true) {
+      return 'Company name is required';
+    }
+    return null;
+  }
+
+  String? validateTeamName(String? value) {
+    if (value?.isEmpty == true) {
+      return 'Team name is required';
+    }
+    return null;
+  }
+
+  String? validateFirstName(String? value) {
+    if (value?.isEmpty == true) {
+      return 'First name is required';
+    }
+    return null;
+  }
+
+  String? validateLastName(String? value) {
+    if (value?.isEmpty == true) {
+      return 'Last name is required';
+    }
+    return null;
+  }
+
+  void createWorkspace() {
+    isLoading = true;
+    notifyListeners();
+    
+    teamNameController.clear();
+    firstNameController.clear();
+    lastNameController.clear();
+
+    isLoading = false;
+    notifyListeners();
   }
 }
