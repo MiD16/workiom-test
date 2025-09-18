@@ -2,21 +2,38 @@ import 'package:flutter/material.dart';
 
 import '../../core/app_export.dart';
 import '../../widgets/custom_image_view.dart';
+import './provider/thank_you_provider.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class ThankYouScreen extends StatefulWidget {
+  const ThankYouScreen({super.key});
+
+  static Widget builder(BuildContext context) {
+    return ChangeNotifierProvider<ThankYouProvider>(
+      create: (context) => ThankYouProvider(),
+      child: const ThankYouScreen(),
+    );
+  }
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<ThankYouScreen> createState() => _ThankYouScreenState();
 }
 
-class _HomePageState extends State<HomePage> {
-  
+class _ThankYouScreenState extends State<ThankYouScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ThankYouProvider>(context, listen: false).initialize();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: appTheme.whiteA700,
-      body: Container(
+      body: Consumer<ThankYouProvider>(
+        builder: (context, provider, child) {
+          return Container(
             width: double.infinity,
             height: double.infinity,
             decoration: BoxDecoration(
@@ -44,7 +61,9 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-          ),
+          );
+        },
+      ),
     );
   }
 

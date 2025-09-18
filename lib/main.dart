@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:workiom/data/data_sources/remote_data_source.dart';
-import 'package:workiom/data/repositories/auth_repository_implementation.dart';
-import 'package:workiom/theme/theme_helper.dart';
-import 'core/token_storage.dart';
-import 'core/api_client.dart';
-import 'domain/repositories/auth_repository.dart';
-import 'presentation/controllers/auth_controller.dart';
-import 'presentation/controllers/signup_controller.dart';
-import 'presentation/pages/splash_page.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
+import 'core/app_export.dart';
+
+var globalMessengerKey = GlobalKey<ScaffoldMessengerState>();
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  Future.wait([
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]),
+  ]).then((value) {
+    runApp(MyApp());
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -19,29 +19,31 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokenStorage = TokenStorage();
-    final apiClient = ApiClient(tokenStorage);
-    final remote = RemoteDataSource(apiClient);
-    final authRepo = AuthRepositoryImpl(remote: remote, tokenStorage: tokenStorage);
-
-    return MultiProvider(
-      providers: [
-        Provider<TokenStorage>.value(value: tokenStorage),
-        Provider<ApiClient>.value(value: apiClient),
-        Provider<RemoteDataSource>.value(value: remote),
-        Provider<AuthRepository>.value(value: authRepo),
-        ChangeNotifierProvider<AuthController>(
-          create: (_) => AuthController(repository: authRepo, tokenStorage: tokenStorage),
-        ),
-        ChangeNotifierProvider<SignupController>(
-          create: (_) => SignupController(repository: authRepo),
-        ),
-      ],
-      child: MaterialApp(
-        title: 'Workiom Flutter Test',
-        theme: ThemeHelper().themeData(),
-        home: const SplashPage(),
-      ),
+    return Sizer(
+      builder: (context, orientation, deviceType) {
+        return MaterialApp(
+          title: 'Workiom Test',
+          debugShowCheckedModeBanner: false,
+          theme: theme,
+          builder: (context, child) {
+            return MediaQuery(
+              data: MediaQuery.of(
+                context,
+              ).copyWith(textScaler: TextScaler.linear(1.0)),
+              child: child!,
+            );
+          },
+          navigatorKey: NavigatorService.navigatorKey,
+          localizationsDelegates: [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: [Locale('en', '')],
+          initialRoute: AppRoutes.initialRoute,
+          routes: AppRoutes.routes,
+        );
+      },
     );
   }
 }

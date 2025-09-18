@@ -11,7 +11,6 @@ class CustomButton extends StatelessWidget {
     this.backgroundColor,
     this.textColor,
     this.rightIcon,
-    this.leftIcon,
     this.padding,
     this.margin,
     this.borderRadius,
@@ -22,17 +21,27 @@ class CustomButton extends StatelessWidget {
   });
 
   final String text;
+
   final VoidCallback? onPressed;
+
   final Color? backgroundColor;
+
   final Color? textColor;
+
   final String? rightIcon;
-  final String? leftIcon;
+
   final EdgeInsetsGeometry? padding;
+
   final EdgeInsetsGeometry? margin;
+
   final double? borderRadius;
+
   final double? fontSize;
+
   final FontWeight? fontWeight;
+
   final double? height;
+
   final double? width;
 
   @override
@@ -48,13 +57,9 @@ class CustomButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius ?? 16.h),
           ),
-          padding: padding ??
-              EdgeInsets.only(
-                top: 14.h,
-                bottom: 14.h,
-                left: 30.h,
-                right: 30.h,
-              ),
+          padding:
+              padding ??
+              EdgeInsets.only(top: 14.h, bottom: 14.h, left: 30.h, right: 30.h),
           elevation: 0,
         ),
         child: Row(
@@ -63,26 +68,15 @@ class CustomButton extends StatelessWidget {
             Expanded(
               child: Text(
                 text,
-                style: TextStyleHelper.instance.body12RegularRubik
-                    .copyWith(color: textColor ?? Color(0xFFFFFFFF)),
+                style: TextStyleHelper.instance.body12RegularRubik.copyWith(
+                  color: textColor ?? Color(0xFFFFFFFF),
+                ),
                 textAlign: TextAlign.left,
               ),
             ),
             if (rightIcon != null) ...[
               SizedBox(width: 8.h),
-              CustomImageView(
-                imagePath: rightIcon!,
-                height: 16.h,
-                width: 24.h,
-              ),
-            ],
-            if (leftIcon != null) ...[
-              SizedBox(width: 8.h),
-              CustomImageView(
-                imagePath: leftIcon!,
-                height: 16.h,
-                width: 24.h,
-              ),
+              CustomImageView(imagePath: rightIcon!, height: 16.h, width: 24.h),
             ],
           ],
         ),

@@ -1,6 +1,24 @@
 import 'package:flutter/material.dart';
 
-const int figmaDesignWidth = 375;
+const num figmaDesignWidth = 375;
+
+extension ResponsiveExtension on num {
+  double get _width => SizeUtils.width;
+
+  double get h => ((this * _width) / figmaDesignWidth);
+
+  double get fontSize => ((this * _width) / figmaDesignWidth);
+}
+
+extension FormatExtension on double {
+  double toDoubleValue({int fractionDigits = 2}) {
+    return double.parse(toStringAsFixed(fractionDigits));
+  }
+
+  double isNonZero({num defaultValue = 0.0}) {
+    return this > 0 ? this : defaultValue.toDouble();
+  }
+}
 
 enum DeviceType { mobile, tablet, desktop }
 
@@ -57,23 +75,5 @@ class SizeUtils {
       height = boxConstraints.maxWidth.isNonZero();
     }
     deviceType = DeviceType.mobile;
-  }
-}
-
-extension ResponsiveExtension on num {
-  double get _width => SizeUtils.width;
-
-  double get h => ((this * _width) / figmaDesignWidth);
-
-  double get fontSize => ((this * _width) / figmaDesignWidth);
-}
-
-extension FormatExtension on double {
-  double toDoubleValue({int fractionDigits = 2}) {
-    return double.parse(toStringAsFixed(fractionDigits));
-  }
-
-  double isNonZero({num defaultValue = 0.0}) {
-    return this > 0 ? this : defaultValue.toDouble();
   }
 }

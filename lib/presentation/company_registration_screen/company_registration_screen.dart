@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:workiom/presentation/controllers/signup_controller.dart';
-import 'package:workiom/presentation/pages/home_page.dart';
 
 import '../../core/app_export.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_edit_text.dart';
 import '../../widgets/custom_image_view.dart';
+import './provider/company_registration_provider.dart';
 
 class CompanyRegistrationScreen extends StatefulWidget {
-  const CompanyRegistrationScreen({super.key});
+  const CompanyRegistrationScreen({Key? key}) : super(key: key);
+
+  static Widget builder(BuildContext context) {
+    return ChangeNotifierProvider<CompanyRegistrationProvider>(
+      create: (context) => CompanyRegistrationProvider(),
+      child: const CompanyRegistrationScreen(),
+    );
+  }
 
   @override
   State<CompanyRegistrationScreen> createState() =>
@@ -21,14 +26,33 @@ class _CompanyRegistrationScreenState extends State<CompanyRegistrationScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<CompanyRegistrationProvider>(
+        context,
+        listen: false,
+      ).initialize();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: appTheme.whiteA700,
-      appBar: CustomAppBar(onBackPressed: () => Navigator.of(context).pop()),
+      appBar: CustomAppBar(
+        leadingIconPath: ImageConstant.imgArrowLeft,
+        padding: EdgeInsets.only(
+          top: 8.h,
+          right: 16.h,
+          bottom: 8.h,
+          left: 16.h,
+        ),
+      ),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
-          child: Consumer<SignupController>(
+          child: Consumer<CompanyRegistrationProvider>(
             builder: (context, provider, child) {
               return Container(
                 width: double.infinity,
@@ -42,19 +66,7 @@ class _CompanyRegistrationScreenState extends State<CompanyRegistrationScreen> {
                           'Enter your company name',
                           style: TextStyleHelper.instance.title22MediumRubik,
                         ),
-                        Container(
-                          margin: EdgeInsets.only(left: 8.h),
-                          child: CustomImageView(
-                            imagePath: ImageConstant.imgEmojioneWaving,
-                            width: 22.h,
-                            height: 22.h,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 8.h),
-                    Row(
-                      children: [
+                        SizedBox(height: 8.h),
                         Text(
                           'Let\'s start an amazing journey!',
                           style: TextStyleHelper.instance.title17RegularRubik,
@@ -93,8 +105,8 @@ class _CompanyRegistrationScreenState extends State<CompanyRegistrationScreen> {
                             Expanded(
                               child: CustomEditText(
                                 controller: provider.teamNameController,
-                                hintText: 'MyWorkiom',
-                                contentPadding: EdgeInsets.only(
+                                placeholder: 'MyWorkiom',
+                                padding: EdgeInsets.only(
                                   top: 4.h,
                                   right: 94.h,
                                   bottom: 4.h,
@@ -134,8 +146,8 @@ class _CompanyRegistrationScreenState extends State<CompanyRegistrationScreen> {
                               Expanded(
                                 child: CustomEditText(
                                   controller: provider.firstNameController,
-                                  hintText: 'Irfan',
-                                  contentPadding: EdgeInsets.only(
+                                  placeholder: 'Irfan',
+                                  padding: EdgeInsets.only(
                                     top: 12.h,
                                     right: 2.h,
                                     bottom: 10.h,
@@ -177,8 +189,8 @@ class _CompanyRegistrationScreenState extends State<CompanyRegistrationScreen> {
                               Expanded(
                                 child: CustomEditText(
                                   controller: provider.lastNameController,
-                                  hintText: 'Ozdemir',
-                                  contentPadding: EdgeInsets.only(
+                                  placeholder: 'Ozdemir',
+                                  padding: EdgeInsets.only(
                                     top: 12.h,
                                     right: 2.h,
                                     bottom: 10.h,
@@ -199,10 +211,7 @@ class _CompanyRegistrationScreenState extends State<CompanyRegistrationScreen> {
                       onPressed: () {
                         if (_formKey.currentState?.validate() ?? false) {
                           provider.createWorkspace();
-                          Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(builder: (_) => HomePage()),
-                            (_) => false,
-                          );
+                          NavigatorService.pushNamed(AppRoutes.thankYouScreen);
                         }
                       },
                       backgroundColor: appTheme.blueA200,

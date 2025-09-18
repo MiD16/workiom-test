@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:workiom/presentation/controllers/auth_controller.dart';
-import 'package:workiom/presentation/pages/company_registration_page.dart';
 
 import '../../core/app_export.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_image_view.dart';
+import './provider/account_registration_provider.dart';
 
-class AccountRegistrationPage extends StatefulWidget {
-  const AccountRegistrationPage({super.key});
+class AccountRegistrationScreen extends StatefulWidget {
+  const AccountRegistrationScreen({super.key});
+
+  static Widget builder(BuildContext context) {
+    return ChangeNotifierProvider<AccountRegistrationProvider>(
+      create: (context) => AccountRegistrationProvider()..initialize(),
+      child: const AccountRegistrationScreen(),
+    );
+  }
 
   @override
-  State<AccountRegistrationPage> createState() =>
-      _AccountRegistrationPageState();
+  State<AccountRegistrationScreen> createState() =>
+      _AccountRegistrationScreenState();
 }
 
-class _AccountRegistrationPageState extends State<AccountRegistrationPage> {
+class _AccountRegistrationScreenState extends State<AccountRegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +38,12 @@ class _AccountRegistrationPageState extends State<AccountRegistrationPage> {
           ],
         ),
         child: Column(
-          children: [_buildAppBar(), Expanded(child: _buildMainContent())],
+          children: [
+            _buildAppBar(),
+            Expanded(
+              child: _buildMainContent(),
+            ),
+          ],
         ),
       ),
     );
@@ -43,13 +53,13 @@ class _AccountRegistrationPageState extends State<AccountRegistrationPage> {
     return CustomAppBar(
       title: 'Sign in',
       onBackPressed: () {
-        Navigator.of(context).pop();
+        NavigatorService.goBack();
       },
     );
   }
 
   Widget _buildMainContent() {
-    return Consumer<AuthController>(
+    return Consumer<AccountRegistrationProvider>(
       builder: (context, provider, child) {
         return Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.h, vertical: 12.h),
@@ -68,7 +78,7 @@ class _AccountRegistrationPageState extends State<AccountRegistrationPage> {
   }
 
   Widget _buildWelcomeSection() {
-    return Consumer<AuthController>(
+    return Consumer<AccountRegistrationProvider>(
       builder: (context, provider, child) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,18 +107,17 @@ class _AccountRegistrationPageState extends State<AccountRegistrationPage> {
               text: 'Continue with Google',
               backgroundColor: appTheme.gray_100,
               textColor: appTheme.black_900,
-              leftIcon: ImageConstant.imgFlatcoloriconsgoogle,
+              rightIcon: ImageConstant.imgFlatcoloriconsgoogle,
               onPressed: () {
-                debugPrint('Tried to Sign in using Google APIs');
+                provider.onGoogleSignInPressed();
               },
             ),
             SizedBox(height: 30.h),
             Center(
               child: Text(
                 'Or',
-                style: TextStyleHelper.instance.body12RegularRubik.copyWith(
-                  color: appTheme.colorB25555,
-                ),
+                style: TextStyleHelper.instance.body12RegularRubik
+                    .copyWith(color: appTheme.colorB25555),
               ),
             ),
             SizedBox(height: 30.h),
@@ -118,7 +127,7 @@ class _AccountRegistrationPageState extends State<AccountRegistrationPage> {
               textColor: appTheme.whiteCustom,
               rightIcon: ImageConstant.imgGroup710,
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => CompanyRegistrationScreen()));
+                provider.onEmailSignInPressed();
               },
             ),
             SizedBox(height: 16.h),
@@ -165,7 +174,10 @@ class _AccountRegistrationPageState extends State<AccountRegistrationPage> {
           width: 16.h,
         ),
         SizedBox(width: 8.h),
-        Text('English', style: TextStyleHelper.instance.body12RegularRubik),
+        Text(
+          'English',
+          style: TextStyleHelper.instance.body12RegularRubik,
+        ),
         SizedBox(width: 8.h),
         CustomImageView(
           imagePath: ImageConstant.imgPolygon6,
@@ -182,9 +194,8 @@ class _AccountRegistrationPageState extends State<AccountRegistrationPage> {
       children: [
         Text(
           'Stay organized with',
-          style: TextStyleHelper.instance.body15RegularRubik.copyWith(
-            color: appTheme.gray_700,
-          ),
+          style: TextStyleHelper.instance.body15RegularRubik
+              .copyWith(color: appTheme.gray_700),
         ),
         SizedBox(width: 8.h),
         CustomImageView(
