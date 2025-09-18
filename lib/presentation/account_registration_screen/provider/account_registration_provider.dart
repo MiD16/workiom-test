@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/app_export.dart';
+import '../../../providers/auth_provider.dart';
 import '../models/account_registration_model.dart';
 
 class AccountRegistrationProvider extends ChangeNotifier {
@@ -16,8 +17,10 @@ class AccountRegistrationProvider extends ChangeNotifier {
     debugPrint('Google sign in pressed');
   }
 
-  void onEmailSignInPressed() {
-    // Navigate to password setup screen or email sign in screen
+  void onEmailSignInPressed(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    authProvider.loadEditions();
+    authProvider.loadPasswordComplexity();
     NavigatorService.pushNamed(AppRoutes.passwordSetupScreen);
   }
 }

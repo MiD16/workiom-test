@@ -8,7 +8,7 @@ import '../../widgets/custom_image_view.dart';
 import './provider/company_registration_provider.dart';
 
 class CompanyRegistrationScreen extends StatefulWidget {
-  const CompanyRegistrationScreen({Key? key}) : super(key: key);
+  const CompanyRegistrationScreen({super.key});
 
   static Widget builder(BuildContext context) {
     return ChangeNotifierProvider<CompanyRegistrationProvider>(
@@ -41,7 +41,6 @@ class _CompanyRegistrationScreenState extends State<CompanyRegistrationScreen> {
     return Scaffold(
       backgroundColor: appTheme.whiteA700,
       appBar: CustomAppBar(
-        leadingIconPath: ImageConstant.imgArrowLeft,
         padding: EdgeInsets.only(
           top: 8.h,
           right: 16.h,
@@ -60,12 +59,12 @@ class _CompanyRegistrationScreenState extends State<CompanyRegistrationScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Text(
+                      'Enter your company name',
+                      style: TextStyleHelper.instance.title22MediumRubik,
+                    ),
                     Row(
                       children: [
-                        Text(
-                          'Enter your company name',
-                          style: TextStyleHelper.instance.title22MediumRubik,
-                        ),
                         SizedBox(height: 8.h),
                         Text(
                           'Let\'s start an amazing journey!',
@@ -113,7 +112,7 @@ class _CompanyRegistrationScreenState extends State<CompanyRegistrationScreen> {
                                   left: 2.h,
                                 ),
                                 validator:
-                                    (value) => provider.validateTeamName(value),
+                                    (value) => provider.validateTeamName(value, context),
                               ),
                             ),
                           ],
@@ -155,7 +154,7 @@ class _CompanyRegistrationScreenState extends State<CompanyRegistrationScreen> {
                                   ),
                                   validator:
                                       (value) =>
-                                          provider.validateFirstName(value),
+                                          provider.validateFirstName(value, context),
                                 ),
                               ),
                             ],
@@ -198,7 +197,7 @@ class _CompanyRegistrationScreenState extends State<CompanyRegistrationScreen> {
                                   ),
                                   validator:
                                       (value) =>
-                                          provider.validateLastName(value),
+                                          provider.validateLastName(value, context),
                                 ),
                               ),
                             ],
@@ -207,14 +206,13 @@ class _CompanyRegistrationScreenState extends State<CompanyRegistrationScreen> {
                       ],
                     ),
                     CustomButton(
-                      text: 'Create Workspace',
-                      onPressed: () {
+                      text: provider.isLoading ? 'Creating...' : 'Create Workspace',
+                      onPressed: provider.isLoading || !provider.isFormValid ? null : () async {
                         if (_formKey.currentState?.validate() ?? false) {
-                          provider.createWorkspace();
-                          NavigatorService.pushNamed(AppRoutes.thankYouScreen);
+                          await provider.createWorkspace(context);
                         }
                       },
-                      backgroundColor: appTheme.blueA200,
+                      backgroundColor: provider.isFormValid && !provider.isLoading ? appTheme.blueA200 : appTheme.gray_100,
                       textColor: appTheme.whiteA700,
                       rightIcon: ImageConstant.imgGroup710,
                       borderRadius: 16.h,

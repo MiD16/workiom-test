@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/app_export.dart';
+import '../../../providers/auth_provider.dart';
 import '../models/password_setup_model.dart';
 
 class PasswordSetupProvider extends ChangeNotifier {
@@ -11,6 +12,8 @@ class PasswordSetupProvider extends ChangeNotifier {
 
   bool isLoading = false;
   bool isFormValid = false;
+  bool hasMinLength = false;
+  bool hasUppercase = false;
 
   @override
   void dispose() {
@@ -34,17 +37,9 @@ class PasswordSetupProvider extends ChangeNotifier {
     return null;
   }
 
-  String? validatePassword(String? value) {
-    if (value?.isEmpty ?? true) {
-      return 'Password is required';
-    }
-    if ((value?.length ?? 0) < 7) {
-      return 'Password must have at least 7 characters';
-    }
-    if (!RegExp(r'[A-Z]').hasMatch(value!)) {
-      return 'Password must have at least one uppercase letter';
-    }
-    return null;
+  String? validatePassword(String? value, BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    return authProvider.validatePassword(value);
   }
 
   void onEmailChanged(String value) {
@@ -58,12 +53,28 @@ class PasswordSetupProvider extends ChangeNotifier {
   }
 
   void _validateForm() {
-    isFormValid = validateEmail(emailController.text) == null &&
-        validatePassword(passwordController.text) == null;
+    final password = passwordController.text;
+    hasMinLength = password.length >= 7;
+    hasUppercase = RegExp(r'[A-Z]').hasMatch(password);
+    isFormValid = validateEmail(emailController.text) == null && hasMinLength && hasUppercase;
     notifyListeners();
   }
 
-  Future<void> onConfirmPasswordPressed(GlobalKey<FormState> formKey) async {
+  Color getStrengthBarColor() {
+    if (passwordController.text.isEmpty) return appTheme.gray_100;
+    if (hasMinLength && hasUppercase) return appTheme.green_400;
+    if (hasMinLength || hasUppercase) return Colors.yellow;
+    return Colors.red;
+  }
+
+  double getStrengthBarWidth() {
+    if (passwordController.text.isEmpty) return 0;
+    if (hasMinLength && hasUppercase) return 182.h;
+    if (hasMinLength || hasUppercase) return 121.h;
+    return 61.h;
+  }
+
+  Future<void> onConfirmPasswordPressed(GlobalKey<FormState> formKey, BuildContext context) async {
     if (!formKey.currentState!.validate()) {
       return;
     }
@@ -71,17 +82,15 @@ class PasswordSetupProvider extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    await Future.delayed(Duration(seconds: 1));
-
-    passwordSetupModel.email = emailController.text;
-    passwordSetupModel.password = passwordController.text;
-
-    emailController.clear();
-    passwordController.clear();
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    authProvider.setRegistrationData(
+      email: emailController.text,
+      password: passwordController.text,
+    );
 
     isLoading = false;
     notifyListeners();
 
-    NavigatorService.pushNamed(AppRoutes.accountRegistrationScreen);
+    NavigatorService.pushNamed(AppRoutes.companyRegistrationScreen);
   }
 }

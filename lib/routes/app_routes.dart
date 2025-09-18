@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import '../presentation/splash_screen/splash_screen.dart';
 import '../presentation/account_registration_screen/account_registration_screen.dart';
 import '../presentation/password_setup_screen/password_setup_screen.dart';
-
 import '../presentation/company_registration_screen/company_registration_screen.dart';
 import '../presentation/thank_you_screen/thank_you_screen.dart';
 
@@ -13,6 +13,7 @@ class AppRoutes {
   static const String initialRoute = '/splash_screen';
 
   static Map<String, WidgetBuilder> get routes => {
+        initialRoute: SplashScreen.builder,
         accountRegistrationScreen: AccountRegistrationScreen.builder,
         passwordSetupScreen: PasswordSetupScreen.builder,
         companyRegistrationScreen: CompanyRegistrationScreen.builder,

@@ -170,7 +170,7 @@ class _PasswordSetupScreenState extends State<PasswordSetupScreen> {
                 rightImage: ImageConstant.imgConfigurationShow,
                 textStyle: TextStyleHelper.instance.body15RegularRubik,
                 padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 12.h),
-                validator: provider.validatePassword,
+                validator: (value) => provider.validatePassword(value, context),
                 onChanged: provider.onPasswordChanged,
               ),
             ),
@@ -181,71 +181,90 @@ class _PasswordSetupScreenState extends State<PasswordSetupScreen> {
   }
 
   Widget _buildPasswordStrengthIndicator(BuildContext context) {
-    return Container(
-      width: 182.h,
-      height: 6.h,
-      decoration: BoxDecoration(
-        color: appTheme.green_400,
-        borderRadius: BorderRadius.circular(3.h),
-      ),
+    return Consumer<PasswordSetupProvider>(
+      builder: (context, provider, child) {
+        return Container(
+          width: 300.h,
+          height: 6.h,
+          decoration: BoxDecoration(
+            color: appTheme.gray_100,
+            borderRadius: BorderRadius.circular(3.h),
+          ),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Container(
+              width: provider.getStrengthBarWidth(),
+              height: 6.h,
+              decoration: BoxDecoration(
+                color: provider.getStrengthBarColor(),
+                borderRadius: BorderRadius.circular(3.h),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
   Widget _buildPasswordRequirements(BuildContext context) {
-    return Column(
-      spacing: 4.h,
-      children: [
-        Row(
-          children: [
-            CustomImageView(
-              imagePath: ImageConstant.imgFrame827237,
-              height: 16.h,
-              width: 16.h,
-            ),
-            SizedBox(width: 8.h),
-            Text(
-              'Not enought strong',
-              style: TextStyleHelper.instance.body15MediumRubik
-                  .copyWith(color: appTheme.blueGray_900),
-            ),
-          ],
-        ),
-        Column(
+    return Consumer<PasswordSetupProvider>(
+      builder: (context, provider, child) {
+        return Column(
           spacing: 4.h,
           children: [
             Row(
               children: [
-                CustomImageView(
-                  imagePath: ImageConstant.imgFrame827237,
-                  height: 16.h,
-                  width: 16.h,
+                Icon(
+                  provider.hasMinLength && provider.hasUppercase ? Icons.check_circle : Icons.cancel,
+                  color: provider.hasMinLength && provider.hasUppercase ? Colors.green : Colors.red,
+                  size: 16.h,
                 ),
                 SizedBox(width: 8.h),
                 Text(
-                  'Passwords must have at least 7 characters',
-                  style: TextStyleHelper.instance.body12RegularRubik,
+                  provider.hasMinLength && provider.hasUppercase ? 'Password is Strong!' : 'Not enough strong',
+                  style: TextStyleHelper.instance.body15MediumRubik
+                      .copyWith(color: appTheme.blueGray_900),
                 ),
               ],
             ),
-            Row(
+            Column(
+              spacing: 4.h,
               children: [
-                CustomImageView(
-                  imagePath: ImageConstant.imgFrame827237,
-                  height: 16.h,
-                  width: 16.h,
+                Row(
+                  children: [
+                    Icon(
+                      provider.hasMinLength ? Icons.check_circle : Icons.cancel,
+                      color: provider.hasMinLength ? Colors.green : Colors.red,
+                      size: 16.h,
+                    ),
+                    SizedBox(width: 8.h),
+                    Text(
+                      'Passwords must have at least 7 characters',
+                      style: TextStyleHelper.instance.body12RegularRubik,
+                    ),
+                  ],
                 ),
-                SizedBox(width: 8.h),
-                Expanded(
-                  child: Text(
-                    'Passwords must have at least one uppercase (\'A\'-\'Z\').',
-                    style: TextStyleHelper.instance.body12RegularRubik,
-                  ),
+                Row(
+                  children: [
+                    Icon(
+                      provider.hasUppercase ? Icons.check_circle : Icons.cancel,
+                      color: provider.hasUppercase ? Colors.green : Colors.red,
+                      size: 16.h,
+                    ),
+                    SizedBox(width: 8.h),
+                    Expanded(
+                      child: Text(
+                        'Passwords must have at least one uppercase (\'A\'-\'Z\').',
+                        style: TextStyleHelper.instance.body12RegularRubik,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
           ],
-        ),
-      ],
+        );
+      },
     );
   }
 
@@ -253,10 +272,10 @@ class _PasswordSetupScreenState extends State<PasswordSetupScreen> {
       BuildContext context, PasswordSetupProvider provider) {
     return CustomButton(
       text: 'Confirm password',
-      backgroundColor: appTheme.blueA200,
+      backgroundColor: provider.isFormValid ? appTheme.blueA200 : appTheme.gray_600,
       textColor: appTheme.whiteA700,
       rightIcon: ImageConstant.imgGroup710,
-      onPressed: () => provider.onConfirmPasswordPressed(_formKey),
+      onPressed: provider.isFormValid ? () => provider.onConfirmPasswordPressed(_formKey, context) : null,
     );
   }
 

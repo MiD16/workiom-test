@@ -127,7 +127,7 @@ class _AccountRegistrationScreenState extends State<AccountRegistrationScreen> {
               textColor: appTheme.whiteCustom,
               rightIcon: ImageConstant.imgGroup710,
               onPressed: () {
-                provider.onEmailSignInPressed();
+                provider.onEmailSignInPressed(context);
               },
             ),
             SizedBox(height: 16.h),

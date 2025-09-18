@@ -16,12 +16,12 @@ class NavigatorService {
   }
 
   static Future<dynamic> pushNamedAndRemoveUntil(
-    String routeName, {
-    bool routePredicate = false,
+    String routeName,
+    bool Function(Route<dynamic>) predicate, {
     dynamic arguments,
   }) async {
     return navigatorKey.currentState?.pushNamedAndRemoveUntil(
-        routeName, (route) => routePredicate,
+        routeName, predicate,
         arguments: arguments);
   }
 
